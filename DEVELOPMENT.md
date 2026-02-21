@@ -29,11 +29,13 @@ Produces `super-copy-to-md-v{version}.zip` — upload this file to the [Chrome W
 
 This is a Manifest V3 extension with no build step — plain JavaScript, no transpilation.
 
-- **`background.js`** — service worker. Registers the context menu on `onInstalled` and forwards click events to the content script via `chrome.tabs.sendMessage`.
-- **`content.js`** — does all the real work. Listens for the message, captures the selection HTML, converts it to Markdown, and writes to the clipboard.
-- **`turndown.js`** — vendored [Turndown](https://github.com/mixmark-io/turndown) library (HTML → Markdown). Loaded as a content script so it is available as a global (`TurndownService`).
+- **`background.js`** — service worker. Registers the context menu on `onInstalled`. When the Copy item is clicked, injects the three scripts into the active tab via `chrome.scripting.executeScript`.
+- **`content.js`** — does all the real work. Executes immediately on injection (IIFE), captures the selection HTML, converts it to Markdown, and writes to the clipboard.
+- **`turndown.js`** — vendored [Turndown](https://github.com/mixmark-io/turndown) library (HTML → Markdown). Injected before `content.js` so `TurndownService` is available as a global.
 - **`turndown-plugin-gfm.js`** — vendored GFM plugin, modified (see below).
 - **`options.html` / `options.js`** — settings page. Opens as a full browser tab; this is standard Chrome MV3 behaviour when `openOptionsPage()` is called programmatically and cannot be changed to a popup.
+
+Scripts are injected on demand rather than declared as `content_scripts` in the manifest. This avoids the broad `<all_urls>` host permission, which triggers an in-depth review on the Chrome Web Store. The `activeTab` permission grants temporary access to the current tab when the user clicks a context menu item, which is sufficient.
 
 ### Escape function
 

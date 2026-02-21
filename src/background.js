@@ -20,7 +20,10 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "copy-as-markdown") {
-    chrome.tabs.sendMessage(tab.id, { action: "copy-selection" });
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+    });
   } else if (info.menuItemId === "open-options") {
     chrome.runtime.openOptionsPage();
   }

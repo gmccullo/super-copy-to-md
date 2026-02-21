@@ -240,9 +240,9 @@ function applyPrefix(markdown, prefix) {
   ).join('\n');
 }
 
-chrome.runtime.onMessage.addListener((message) => {
-  if (message.action !== 'copy-selection') return;
-
+// Scripts are injected on demand via scripting.executeScript when the context
+// menu item is clicked — so just execute immediately on injection.
+(function () {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
 
@@ -283,4 +283,4 @@ chrome.runtime.onMessage.addListener((message) => {
       console.error('Super Copy to Markdown: clipboard write failed', err);
     });
   });
-});
+}());
