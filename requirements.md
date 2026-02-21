@@ -1,25 +1,69 @@
-# Chromium extensions
+# Super Copy to Markdown — Requirements
 
-## name
+## Core behaviour
 
-Super copy html to markdown
+**As a user, I want to copy any selected text on a webpage as formatted Markdown** so that I can paste it directly into a Markdown editor without manual cleanup.
 
-## local develop location
+- The extension is triggered by right-clicking selected text and choosing **Super copy to markdown → Copy** from the context menu.
+- The converted Markdown is written to the clipboard.
 
-C:\Dropbox.staging\personal.programming.vscode\super-copy-to-md
+**As a user, I want every line of the copied Markdown prefixed with a blockquote marker** so that the pasted content is immediately formatted as a blockquote.
 
-## requirements
+- The default prefix is `> `.
+- Blank lines receive the prefix without trailing whitespace (i.e. `>` not `> `), to avoid trailing-space linting violations.
 
-1. copy html src of selected range to the clipboard as formatted markdown.
-2. by default prefix each line of the markdown with blockquote marker, ie "> ".
-3. make the prefix configurable and optional.
-4. after the markdown, append a new blank line followed by another line. both lines should also be prefixed. the last line contains "\~ [<page title>](<url>)". <page title> is the title of the html page.
-5. write all urls as literals inside angle brackets, (not url-encoded). all urls must be fully qualified (e.g. "https://example.com/word/lane", not "/word/lane").
-6. escape appropriate characters in the markdown markup. for example, left braces that are not links.
-7. by default define links as standard markdown inline links.
-8. provide a configuration option to define links as reference links. for example, links to other pages or images.
-9. triggered via right-click context menu on selected text ("Copy as Markdown").
-10. trailing <br> tags (no meaningful content after them) are dropped rather than converted to a backslash line break.
-11. html tables are converted to GFM markdown tables when possible (heading row present, no merged data cells). tables where data cells (td) have colspan/rowspan > 1, or with no heading row, are kept as raw HTML. merged header cells (th) are tolerated. all urls in table links are fully resolved against the page url.
-12. strikethrough (<del>, <s>, <strike>) is converted to ~~text~~. task list checkboxes are converted to [x] / [ ].
-13. known behaviour: list items containing block-level children (e.g. <div> elements) produce multi-paragraph list item markdown, which requires indented continuation lines. inside a blockquote this results in e.g. ">   text" (3 spaces). this is valid CommonMark.
+**As a user, I want a citation line appended automatically** so that the source of a quotation is always recorded alongside it.
+
+- After the Markdown content, two additional prefixed lines are appended: a blank line, then an attribution line in the form `\~ [Page Title](<url>)`.
+- Square brackets in the page title are escaped (as `\[` and `\]`) so the title is valid as Markdown link text.
+
+## URLs
+
+**As a user, I want all URLs to be fully qualified and human-readable** so that links work correctly when pasted into a Markdown editor that is not the original webpage.
+
+- All URLs are resolved to absolute form (e.g. `https://example.com/page`, not `/page`).
+- URLs are entered as literals between angle brackets per CommonMark convention — decoded from percent-encoding and human-readable (e.g. `<https://example.com/hello world>`, not `<https://example.com/hello%20world>`).
+
+## Link styles
+
+**As a user, I want links rendered as inline links by default** — `[text](<url>)` — so that the Markdown is self-contained.
+
+**As a user, I want the option to use reference-style links** — `[text][1]` — with all definitions (`[1]: <url>`) appended after the content and citation, so that the body of the Markdown remains readable. This applies to both hyperlinks and images.
+
+## Options
+
+**As a user, I want to configure the prefix and link style** without editing any files.
+
+- The Options page is accessible via **Super copy to markdown → Options** in the right-click context menu.
+- The prefix field accepts any string, including an empty string (which disables prefixing entirely).
+- A **Reset to defaults** button restores the prefix to `> ` and the link style to inline.
+- Settings are persisted via `chrome.storage.sync`.
+
+## Tables
+
+**As a user, I want HTML tables converted to GitHub Flavored Markdown (GFM) tables** so that tabular data is readable in the pasted output.
+
+- A table is converted to GFM when it has a heading row and no merged data cells.
+- GFM table columns are padded so that pipe characters align vertically.
+- Tables that cannot be represented in GFM (no heading row, or data cells with `colspan`/`rowspan` > 1) are kept as raw HTML. Merged header cells (`<th>`) are tolerated.
+
+**As a user, I want partial table selections to work sensibly** so that I do not have to select an entire table to get clean output.
+
+- When both endpoints of a selection fall within the same table, the extension automatically includes the header row(s) plus only the data rows that intersect the selection.
+
+## Markdown quality
+
+**As a user, I want the output to be clean and linter-friendly** so that it does not generate warnings in tools like markdownlint.
+
+- `<br>` tags with no meaningful content following them are dropped rather than converted to a trailing backslash.
+- `<br>` tags that are followed by real content are converted to a CommonMark hard line break (a trailing `\`).
+- List markers are followed by exactly one space (markdownlint MD030).
+- Blank lines within list items carry no trailing spaces (markdownlint MD009).
+- Emphasis uses `_` by default but switches to `*` when the emphasised text is adjacent to a word character, to avoid Markdown parse failures in contexts like *mid*word emphasis.
+- Characters that have special meaning in Markdown are escaped in body text so they are not misinterpreted by parsers or linters. The following are handled: `\` `` ` `` `*` `_` `[` `]` `(` `)` `#` `+` `-` `.` `!` `|` `{` `}` `~` `<`.
+- Strikethrough (`<del>`, `<s>`, `<strike>`) is converted to `~~text~~`.
+- Task list checkboxes are converted to `[x]` / `[ ]`.
+
+## Known behaviour
+
+- List items that contain block-level children (e.g. `<div>` elements) produce multi-paragraph list item Markdown, which requires indented continuation lines. Inside a blockquote this results in lines like `>   text` (three spaces after `>`). This is valid CommonMark and is not treated as an error.

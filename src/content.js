@@ -28,12 +28,16 @@ function buildTurndown(linkStyle) {
   // GFM: tables (with merged-data-cell fallback to HTML), strikethrough, task lists
   td.use(turndownPluginGfm.gfm);
 
-  // Extend the escape function to also escape { and }
+  // Extend the escape function to cover characters Turndown leaves unescaped.
+  // NOTE: escape() is only called on text nodes — never on rule output — so
+  // these replacements cannot accidentally mangle Markdown constructs like <url>.
   const originalEscape = td.escape.bind(td);
   td.escape = function (string) {
     return originalEscape(string)
-      .replace(/\{/g, '\\{')
-      .replace(/\}/g, '\\}');
+      .replace(/\{/g, '\\{')   // template / attribute syntax in some processors
+      .replace(/\}/g, '\\}')
+      .replace(/~/g, '\\~')    // GFM strikethrough (~~text~~)
+      .replace(/</g, '\\<');   // HTML tags / autolinks
   };
 
   // Drop trailing <br> tags (end of block, no following content) rather than

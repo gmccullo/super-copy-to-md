@@ -18,26 +18,3 @@ A Chromium extension that copies selected webpage content to the clipboard as cl
 3. Paste into your editor
 
 Right-click anywhere → **Super copy to markdown → Options** to configure the prefix and link style.
-
-## Development
-
-Load the extension in Chrome:
-
-1. Open `chrome://extensions`
-2. Enable **Developer mode**
-3. Click **Load unpacked** and select the `src/` folder
-
-## Building for the Chrome Web Store
-
-```powershell
-.\build.ps1
-```
-
-Produces `super-copy-to-md-v{version}.zip` — upload this file to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
-
-## Project Structure
-
-```
-src/        Extension source (point "Load unpacked" here)
-design/     Source assets — icon SVG, icon export tool
-```

@@ -16,7 +16,11 @@ $files = @(
     'src/icons/icon16.png',
     'src/icons/icon32.png',
     'src/icons/icon48.png',
-    'src/icons/icon128.png'
+    'src/icons/icon128.png',
+    'src/icons/copy16.png',
+    'src/icons/copy32.png',
+    'src/icons/gear16.png',
+    'src/icons/gear32.png'
 )
 
 Remove-Item -ErrorAction SilentlyContinue $out
