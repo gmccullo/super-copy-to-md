@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Extension Icons</title>
+  <style>
+    body { font-family: sans-serif; padding: 24px; }
+    h2 { margin-bottom: 16px; }
+    .previews { display: flex; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
+    .preview { text-align: center; }
+    .preview span { display: block; font-size: 11px; color: #666; margin-top: 4px; }
+    .downloads { display: flex; flex-direction: column; gap: 8px; }
+    a.dl {
+      display: inline-block; padding: 8px 16px; background: #1a6ef5;
+      color: white; text-decoration: none; border-radius: 6px; font-size: 14px; width: 200px;
+    }
+    p.instructions { color: #444; max-width: 520px; }
+  </style>
+</head>
+<body>
+  <h2>Generate Extension Icons</h2>
+  <p class="instructions">
+    Click each button to download the PNG. Save all four files into the
+    <code>icons/</code> folder inside the extension directory,
+    then reload the extension in <code>chrome://extensions</code>.
+  </p>
+
+  <div class="previews" id="previews"></div>
+  <div class="downloads" id="downloads"></div>
+
+  <script>
+    const svgSource = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="22" fill="#1a6ef5"/>
+  <polyline points="32,26 90,64 32,102"
+    fill="none" stroke="white" stroke-width="17"
+    stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+
+    const sizes = [16, 32, 48, 128];
+    const blob = new Blob([svgSource], { type: 'image/svg+xml' });
+    const svgUrl = URL.createObjectURL(blob);
+
+    const img = new Image();
+    img.onload = () => {
+      const previews = document.getElementById('previews');
+      const downloads = document.getElementById('downloads');
+
+      sizes.forEach(size => {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        const dataUrl = canvas.toDataURL('image/png');
+
+        // Preview (shown at 2x for small sizes, actual for large)
+        const displaySize = Math.max(size, 32);
+        const previewCanvas = document.createElement('canvas');
+        previewCanvas.width = previewCanvas.height = displaySize;
+        previewCanvas.style.width = previewCanvas.style.height = displaySize + 'px';
+        previewCanvas.style.imageRendering = 'pixelated';
+        previewCanvas.getContext('2d').drawImage(canvas, 0, 0, displaySize, displaySize);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview';
+        wrapper.appendChild(previewCanvas);
+        const label = document.createElement('span');
+        label.textContent = `${size}×${size}`;
+        wrapper.appendChild(label);
+        previews.appendChild(wrapper);
+
+        // Download link
+        const a = document.createElement('a');
+        a.className = 'dl';
+        a.href = dataUrl;
+        a.download = `icon${size}.png`;
+        a.textContent = `↓  icon${size}.png`;
+        downloads.appendChild(a);
+      });
+
+      URL.revokeObjectURL(svgUrl);
+    };
+    img.src = svgUrl;
+  </script>
+</body>
+</html>

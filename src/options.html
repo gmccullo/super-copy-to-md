@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Copy to Markdown — Options</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0f2f5;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      color: #1a1a1a;
+      padding: 32px 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      padding: 28px 32px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: #fff;
+    }
+
+    .card-header img {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .card-header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -.01em;
+    }
+
+    .card-header p {
+      font-size: 12px;
+      opacity: .8;
+      margin-top: 3px;
+    }
+
+    .card-body {
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .field label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .field .hint {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .field .hint + .hint { margin-top: -4px; }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26,115,232,.18);
+    }
+
+    fieldset {
+      border: none;
+    }
+
+    legend {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      padding: 8px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      transition: border-color .15s, background .15s;
+    }
+
+    .radio-group label:has(input:checked) {
+      border-color: #1a73e8;
+      background: #eff6ff;
+    }
+
+    .radio-group label:hover {
+      border-color: #9ca3af;
+    }
+
+    .radio-group code {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 12px;
+      background: #f3f4f6;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #374151;
+    }
+
+    .radio-group label:has(input:checked) code {
+      background: #dbeafe;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    button {
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      transition: background .15s, box-shadow .15s;
+    }
+
+    #save {
+      background: #1a73e8;
+      color: #fff;
+    }
+
+    #save:hover { background: #1558b0; }
+    #save:active { background: #0d47a1; }
+
+    #reset {
+      background: #f3f4f6;
+      color: #374151;
+      border: 1px solid #d1d5db;
+    }
+
+    #reset:hover { background: #e5e7eb; }
+
+    #status {
+      font-size: 13px;
+      color: #16a34a;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+
+    #status.error { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card-header">
+      <img src="icons/icon48.png" alt="">
+      <div>
+        <h1>Super Copy to Markdown</h1>
+        <p>Options</p>
+      </div>
+    </div>
+
+    <div class="card-body">
+
+      <div class="field">
+        <label for="prefix">Line prefix</label>
+        <p class="hint">Each line of the copied markdown is prefixed with this string.</p>
+        <p class="hint">Default: <code>&gt;&nbsp;</code> &nbsp; Leave blank for no prefix.</p>
+        <input type="text" id="prefix" placeholder="e.g.  >  (leave empty for none)" />
+      </div>
+
+      <fieldset>
+        <legend>Link style</legend>
+        <div class="radio-group">
+          <label>
+            <input type="radio" name="linkStyle" value="inline" />
+            Inline &nbsp;<code>[text](&lt;url&gt;)</code>
+          </label>
+          <label>
+            <input type="radio" name="linkStyle" value="reference" />
+            Reference &nbsp;<code>[text][1]</code> with definitions appended
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button id="save">Save</button>
+        <button id="reset">Reset to defaults</button>
+        <span id="status"></span>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
