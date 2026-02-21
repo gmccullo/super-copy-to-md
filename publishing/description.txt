@@ -1,0 +1,23 @@
+Copy any selected webpage content as clean, ready-to-paste Markdown with a single right-click.
+
+HOW IT WORKS
+
+Select text on any page, right-click, and choose "Super copy to markdown" → "Copy". The selection is converted to formatted Markdown and written to your clipboard — ready to paste into Obsidian, Bear, Notion, a text editor, or anywhere you write.
+
+FEATURES
+
+🔖 Blockquote prefix — every line is prefixed with "> " by default, making the paste drop straight into a blockquote. Configurable to any string, or leave it blank for plain Markdown.
+
+📎 Automatic citation — appends a "~ [Page Title](url)" attribution line so you always know where a quote came from.
+
+📊 GFM tables — HTML tables convert to aligned GitHub Flavored Markdown tables, if possible, otherwise to embedded HTML. Select only part of a table and it automatically includes the header row plus the rows you touched.
+
+🔗 Clean URLs — all links and images use fully qualified, human-readable URLs in angle brackets. No relative paths, no percent-encoding.
+
+🔀 Inline or reference links — choose between inline links "[text](<url>)", or reference-style "[text][1]" links with all definitions appended at the end.
+
+✨ Linter-clean output — 1 space after list markers, no trailing spaces, smart _ vs * for emphasis, trailing "<br>" tags dropped gracefully.
+
+OPTIONS
+
+Right-click anywhere and choose Super copy to markdown → Options to configure the line prefix and link style.
