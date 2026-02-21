@@ -2,30 +2,15 @@
 
 $manifest = Get-Content src/manifest.json | ConvertFrom-Json
 $version  = $manifest.version
-$out      = "super-copy-to-md-v$version.zip"
-
-$files = @(
-    'src/manifest.json',
-    'src/background.js',
-    'src/content.js',
-    'src/options.html',
-    'src/options.js',
-    'src/popup.html',
-    'src/turndown.js',
-    'src/turndown-plugin-gfm.js',
-    'src/icons/icon16.png',
-    'src/icons/icon32.png',
-    'src/icons/icon48.png',
-    'src/icons/icon128.png',
-    'src/icons/copy16.png',
-    'src/icons/copy32.png',
-    'src/icons/gear16.png',
-    'src/icons/gear32.png'
-)
+$out      = "$PSScriptRoot\super-copy-to-md-v$version.zip"
 
 Remove-Item -ErrorAction SilentlyContinue $out
 
-Compress-Archive -Path $files -DestinationPath $out
+# Zip from inside src/ so paths in the archive are manifest.json, icons/*, etc.
+# (not src/manifest.json, src/icons/*, etc.)
+Push-Location src
+Compress-Archive -Path * -DestinationPath $out
+Pop-Location
 
 $size = (Get-Item $out).Length / 1KB
-Write-Host "Built: $out ($([math]::Round($size, 1)) KB)"
+Write-Host "Built: $(Split-Path $out -Leaf) ($([math]::Round($size, 1)) KB)"
