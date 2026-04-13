@@ -11,6 +11,12 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"],
   });
   chrome.contextMenus.create({
+    id: "copy-as-blockquote",
+    parentId: "super-copy-parent",
+    title: "Copy as blockquote",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
     id: "copy-selection-as-link",
     parentId: "super-copy-parent",
     title: "Copy as link",
@@ -46,7 +52,22 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "copy-as-markdown") {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+      func: () => { window.__scmd = { options: { quote: false } }; }
+    }).then(() => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+      });
+    });
+  } else if (info.menuItemId === "copy-as-blockquote") {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: () => { window.__scmd = { options: { quote: true } }; }
+    }).then(() => {
+      chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+      });
     });
   } else if (info.menuItemId === "copy-selection-as-link") {
     chrome.scripting.executeScript({

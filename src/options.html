@@ -78,22 +78,6 @@
 
     .field .hint + .hint { margin-top: -4px; }
 
-    input[type="text"] {
-      width: 100%;
-      padding: 8px 10px;
-      font-size: 14px;
-      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-    }
-
-    input[type="text"]:focus {
-      border-color: #1a73e8;
-      box-shadow: 0 0 0 3px rgba(26,115,232,.18);
-    }
-
     fieldset {
       border: none;
     }
@@ -196,13 +180,6 @@
     </div>
 
     <div class="card-body">
-
-      <div class="field">
-        <label for="prefix">Line prefix</label>
-        <p class="hint">Each line of the copied markdown is prefixed with this string.</p>
-        <p class="hint">Default: <code>&gt;&nbsp;</code> &nbsp; Leave blank for no prefix.</p>
-        <input type="text" id="prefix" placeholder="e.g.  >  (leave empty for none)" />
-      </div>
 
       <fieldset>
         <legend>Link style</legend>

@@ -1,14 +1,12 @@
 // options.js — Super Copy to Markdown
 
-const DEFAULTS = { prefix: '> ', linkStyle: 'inline' };
+const DEFAULTS = { linkStyle: 'inline' };
 
-const prefixInput   = document.getElementById('prefix');
-const saveButton    = document.getElementById('save');
-const resetButton   = document.getElementById('reset');
-const statusEl      = document.getElementById('status');
+const saveButton  = document.getElementById('save');
+const resetButton = document.getElementById('reset');
+const statusEl    = document.getElementById('status');
 
 function applySettings(settings) {
-  prefixInput.value = settings.prefix;
   const radio = document.querySelector(`input[name="linkStyle"][value="${settings.linkStyle}"]`);
   if (radio) { radio.checked = true; }
 }
@@ -24,10 +22,9 @@ chrome.storage.sync.get(DEFAULTS, applySettings);
 
 // Save settings
 saveButton.addEventListener('click', () => {
-  const prefix = prefixInput.value;
   const linkStyleRadio = document.querySelector('input[name="linkStyle"]:checked');
   const linkStyle = linkStyleRadio ? linkStyleRadio.value : DEFAULTS.linkStyle;
-  chrome.storage.sync.set({ prefix, linkStyle }, () => showStatus('Saved.'));
+  chrome.storage.sync.set({ linkStyle }, () => showStatus('Saved.'));
 });
 
 // Reset to defaults

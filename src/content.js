@@ -261,8 +261,9 @@ function applyPrefix(markdown, prefix) {
   }
   if (!html.trim()) { return; }
 
-  chrome.storage.sync.get({ prefix: '> ', linkStyle: 'inline' }, (settings) => {
-    const { prefix, linkStyle } = settings;
+  chrome.storage.sync.get({ linkStyle: 'inline' }, (settings) => {
+    const prefix = (window.__scmd?.options?.quote ?? true) ? '> ' : '';
+    const { linkStyle } = settings;
     const { td, refs } = buildTurndown(linkStyle);
 
     const markdown = alignTables(td.turndown(html));
