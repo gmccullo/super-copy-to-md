@@ -140,3 +140,8 @@ performance/doc*.md
 
 # Bash build script (use build.ps1 instead)
 build.sh
+
+.claude/
+claude session.md
+claude.local.md
+settings.local.json
