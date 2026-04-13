@@ -7,7 +7,13 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "copy-as-markdown",
     parentId: "super-copy-parent",
-    title: "Copy",
+    title: "Copy as markdown",
+    contexts: ["selection"],
+  });
+  chrome.contextMenus.create({
+    id: "copy-selection-as-link",
+    parentId: "super-copy-parent",
+    title: "Copy as link",
     contexts: ["selection"],
   });
   chrome.contextMenus.create({
@@ -29,6 +35,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+    });
+  } else if (info.menuItemId === "copy-selection-as-link") {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['copy-selection-as-link.js']
     });
   } else if (info.menuItemId === "copy-page-link") {
     chrome.scripting.executeScript({
