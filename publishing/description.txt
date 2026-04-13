@@ -2,22 +2,32 @@ Copy any selected webpage content as clean, ready-to-paste Markdown with a singl
 
 HOW IT WORKS
 
-Select text on any page, right-click, and choose "Super copy to markdown" → "Copy". The selection is converted to formatted Markdown and written to your clipboard — ready to paste into Obsidian, Bear, Notion, a text editor, or anywhere you write.
+Right-click anywhere on a page to get a context-sensitive set of copy actions under "Super copy to markdown". The result is written to your clipboard — ready to paste into Obsidian, Bear, Notion, a text editor, or anywhere you write.
+
+COPY ACTIONS
+
+📝 Copy as markdown — converts selected HTML to clean Markdown.
+
+🔖 Copy as quote — same as above, wrapped in a Markdown blockquote with a "~ [Page Title](url)" attribution line.
+
+🔗 Copy as link — uses selected text as the caption of a Markdown link to the current page.
+
+🌐 Copy page link — copies the page title and URL as a Markdown link, no selection needed.
+
+🔀 Copy link as markdown — right-click any hyperlink to copy it as a Markdown inline link.
+
+🖼️ Copy image as markdown — right-click any image to copy it as a Markdown image embed.
 
 FEATURES
 
-🔖 Blockquote prefix — every line is prefixed with "> " by default, making the paste drop straight into a blockquote. Configurable to any string, or leave it blank for plain Markdown.
+📊 GFM tables — HTML tables convert to aligned GitHub Flavored Markdown tables. Select only part of a table and it automatically includes the header row plus the rows you touched.
 
-📎 Automatic citation — appends a "~ [Page Title](url)" attribution line so you always know where a quote came from.
+🔗 Clean URLs — fully qualified, human-readable URLs in angle brackets. No relative paths, no percent-encoding.
 
-📊 GFM tables — HTML tables convert to aligned GitHub Flavored Markdown tables, if possible, otherwise to embedded HTML. Select only part of a table and it automatically includes the header row plus the rows you touched.
+🔀 Inline or reference links — choose between inline "[text](<url>)" or reference-style "[text][1]" links with definitions appended.
 
-🔗 Clean URLs — all links and images use fully qualified, human-readable URLs in angle brackets. No relative paths, no percent-encoding.
-
-🔀 Inline or reference links — choose between inline links "[text](<url>)", or reference-style "[text][1]" links with all definitions appended at the end.
-
-✨ Linter-clean output — 1 space after list markers, no trailing spaces, smart _ vs * for emphasis, trailing "<br>" tags dropped gracefully.
+✨ Linter-clean output — 1 space after list markers, no trailing spaces, smart _ vs * for emphasis.
 
 OPTIONS
 
-Right-click anywhere and choose Super copy to markdown → Options to configure the line prefix and link style.
+Right-click anywhere and choose Super copy to markdown → Options to configure the link style.
