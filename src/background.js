@@ -11,6 +11,12 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"],
   });
   chrome.contextMenus.create({
+    id: "copy-page-link",
+    parentId: "super-copy-parent",
+    title: "Copy page link",
+    contexts: ["all"],
+  });
+  chrome.contextMenus.create({
     id: "open-options",
     parentId: "super-copy-parent",
     title: "Options",
@@ -23,6 +29,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+    });
+  } else if (info.menuItemId === "copy-page-link") {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['copy-link.js']
     });
   } else if (info.menuItemId === "open-options") {
     chrome.runtime.openOptionsPage();
