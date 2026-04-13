@@ -4,10 +4,10 @@
 
 (function () {
 	const selection = window.getSelection();
-	if (!selection || selection.isCollapsed) return;
+	if (!selection || selection.isCollapsed) { return; }
 
 	const lines = selection.toString().split('\n').map(l => l.trim()).filter(l => l !== '');
-	if (lines.length === 0) return;
+	if (lines.length === 0) { return; }
 
 	const caption = lines.length > 1 ? lines[0] + '\u2026' : lines[0];
 	const escaped = caption.replace(/[[\]]/g, '\\$&');

@@ -5,11 +5,11 @@
 // internal about:blank document, making node.href/node.src unreliable for
 // relative URLs like "/wiki/Page" or "//cdn.example.com/x".
 function resolveAndDecodeUrl(rawUrl) {
-  if (!rawUrl) return '';
+  if (!rawUrl) { return ''; }
   try {
     const resolved = new URL(rawUrl, window.location.href).href;
-    try { return decodeURIComponent(resolved); } catch (e) { return resolved; }
-  } catch (e) {
+    try { return decodeURIComponent(resolved); } catch { return resolved; }
+  } catch {
     return rawUrl;
   }
 }
@@ -46,7 +46,7 @@ function buildTurndown(linkStyle) {
     filter: 'br',
     replacement: function (content, node) {
       // Walk forward past whitespace-only text nodes to find real following content
-      var next = node.nextSibling;
+      let next = node.nextSibling;
       while (next) {
         if (next.nodeType === 3 && /^\s*$/.test(next.textContent)) {
           next = next.nextSibling;
@@ -62,20 +62,20 @@ function buildTurndown(linkStyle) {
   td.addRule('listItem', {
     filter: 'li',
     replacement: function (content, node, options) {
-      var parent = node.parentNode;
-      var prefix;
+      const parent = node.parentNode;
+      let prefix;
       if (parent.nodeName === 'OL') {
-        var start = parent.getAttribute('start');
-        var index = Array.prototype.indexOf.call(parent.children, node);
-        var num = start ? Number(start) + index : index + 1;
+        const start = parent.getAttribute('start');
+        const index = Array.prototype.indexOf.call(parent.children, node);
+        const num = start ? Number(start) + index : index + 1;
         prefix = num + '. ';
       } else {
         prefix = options.bulletListMarker + ' ';
       }
-      var isParagraph = /\n$/.test(content);
+      const isParagraph = /\n$/.test(content);
       content = content.replace(/^\n+/, '').replace(/\n+$/, '') + (isParagraph ? '\n' : '');
       // Indent continuation lines but leave blank lines empty (no trailing spaces — MD009)
-      var indent = ' '.repeat(prefix.length);
+      const indent = ' '.repeat(prefix.length);
       content = content.split('\n').map(function (line, i) {
         return (i > 0 && line !== '') ? indent + line : line;
       }).join('\n');
@@ -87,13 +87,13 @@ function buildTurndown(linkStyle) {
   td.addRule('emphasis', {
     filter: ['em', 'i'],
     replacement: function (content, node) {
-      if (!content.trim()) return '';
-      var prevText = node.previousSibling && node.previousSibling.nodeType === 3
+      if (!content.trim()) { return ''; }
+      const prevText = node.previousSibling && node.previousSibling.nodeType === 3
         ? node.previousSibling.textContent : '';
-      var nextText = node.nextSibling && node.nextSibling.nodeType === 3
+      const nextText = node.nextSibling && node.nextSibling.nodeType === 3
         ? node.nextSibling.textContent : '';
-      var inWord = /\w$/.test(prevText) || /^\w/.test(nextText);
-      var d = inWord ? '*' : '_';
+      const inWord = /\w$/.test(prevText) || /^\w/.test(nextText);
+      const d = inWord ? '*' : '_';
       return d + content + d;
     }
   });
@@ -115,7 +115,7 @@ function buildTurndown(linkStyle) {
       replacement: function (content, node) {
         const src = resolveAndDecodeUrl(node.getAttribute('src'));
         const alt = node.getAttribute('alt') || '';
-        if (!src) return '';
+        if (!src) { return ''; }
         const id = refs.length + 1;
         refs.push(`[${id}]: <${src}>`);
         return `![${alt}][${id}]`;
@@ -136,7 +136,7 @@ function buildTurndown(linkStyle) {
       replacement: function (content, node) {
         const src = resolveAndDecodeUrl(node.getAttribute('src'));
         const alt = node.getAttribute('alt') || '';
-        if (!src) return '';
+        if (!src) { return ''; }
         return `![${alt}](<${src}>)`;
       }
     });
@@ -152,14 +152,14 @@ function maybeExtractTableRows(range) {
   function tableAncestor(node) {
     let n = node.nodeType === 3 ? node.parentNode : node;
     while (n && n !== document.body) {
-      if (n.nodeName === 'TABLE') return n;
+      if (n.nodeName === 'TABLE') { return n; }
       n = n.parentNode;
     }
     return null;
   }
   const startTable = tableAncestor(range.startContainer);
   const endTable   = tableAncestor(range.endContainer);
-  if (!startTable || startTable !== endTable) return null;
+  if (!startTable || startTable !== endTable) { return null; }
 
   const allRows = Array.from(startTable.rows);
 
@@ -197,7 +197,7 @@ function maybeExtractTableRows(range) {
 function alignTables(text) {
   return text.replace(/((?:^\|[^\n]*\n?)+)/gm, function (block) {
     const lines = block.trim().split('\n');
-    if (lines.length < 2) return block;
+    if (lines.length < 2) { return block; }
 
     // Parse each line into an array of trimmed cell strings
     const rows = lines.map(line =>
@@ -207,9 +207,9 @@ function alignTables(text) {
     const colWidths = new Array(colCount).fill(3); // minimum 3 for '---'
 
     rows.forEach(row => {
-      if (row.every(c => /^:?-+:?$/.test(c))) return; // skip separator row
+      if (row.every(c => /^:?-+:?$/.test(c))) { return; } // skip separator row
       row.forEach((cell, i) => {
-        if (i < colCount) colWidths[i] = Math.max(colWidths[i], cell.length);
+        if (i < colCount) { colWidths[i] = Math.max(colWidths[i], cell.length); }
       });
     });
 
@@ -233,7 +233,7 @@ function alignTables(text) {
 // Prefix every line. Blank lines get the prefix with trailing whitespace trimmed
 // (e.g. ">" not "> ") to avoid trailing-whitespace issues.
 function applyPrefix(markdown, prefix) {
-  if (!prefix) return markdown;
+  if (!prefix) { return markdown; }
   const trimmedPrefix = prefix.trimEnd();
   return markdown.split('\n').map(line =>
     line === '' ? trimmedPrefix : prefix + line
@@ -244,7 +244,7 @@ function applyPrefix(markdown, prefix) {
 // menu item is clicked — so just execute immediately on injection.
 (function () {
   const selection = window.getSelection();
-  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) return;
+  if (!selection || selection.rangeCount === 0 || selection.isCollapsed) { return; }
 
   // Capture selection HTML — if selection is within a table, extract only the
   // header row(s) + the data rows that intersect the selection.
@@ -259,7 +259,7 @@ function applyPrefix(markdown, prefix) {
     div.appendChild(fragment);
     html = div.innerHTML;
   }
-  if (!html.trim()) return;
+  if (!html.trim()) { return; }
 
   chrome.storage.sync.get({ prefix: '> ', linkStyle: 'inline' }, (settings) => {
     const { prefix, linkStyle } = settings;

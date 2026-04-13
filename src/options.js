@@ -10,7 +10,7 @@ const statusEl      = document.getElementById('status');
 function applySettings(settings) {
   prefixInput.value = settings.prefix;
   const radio = document.querySelector(`input[name="linkStyle"][value="${settings.linkStyle}"]`);
-  if (radio) radio.checked = true;
+  if (radio) { radio.checked = true; }
 }
 
 function showStatus(msg, isError = false) {
