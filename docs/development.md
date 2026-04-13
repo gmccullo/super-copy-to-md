@@ -10,13 +10,23 @@
 
 ```
 src/        Extension source (point "Load unpacked" here)
+docs/       Requirements and development notes
 design/     Source assets — icon SVG, icon export tool
 ```
+
+## Tooling
+
+```powershell
+npm run lint     # ESLint
+npm run build    # produces super-copy-to-md-v{version}.zip
+```
+
+ESLint is configured in `eslint.config.js`. Rules: `eslint:recommended` plus `curly`, `no-var`, `prefer-const`, `eqeqeq`. Vendored libraries (`turndown.js`, `turndown-plugin-gfm.js`) are excluded.
 
 ## Building for the Chrome Web Store
 
 ```powershell
-.\build.ps1
+npm run build
 ```
 
 Produces `super-copy-to-md-v{version}.zip` — upload this file to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole).
@@ -29,13 +39,46 @@ Produces `super-copy-to-md-v{version}.zip` — upload this file to the [Chrome W
 
 This is a Manifest V3 extension with no build step — plain JavaScript, no transpilation.
 
-- **`background.js`** — service worker. Registers the context menu on `onInstalled`. When the Copy item is clicked, injects the three scripts into the active tab via `chrome.scripting.executeScript`.
-- **`content.js`** — does all the real work. Executes immediately on injection (IIFE), captures the selection HTML, converts it to Markdown, and writes to the clipboard.
+- **`background.js`** — service worker. Registers the context menu on `onInstalled`. Handles clicks by injecting scripts into the active tab via `chrome.scripting.executeScript`.
+- **`content.js`** — converts the current selection to Markdown and writes it to the clipboard. Executed on demand via script injection. Reads `linkStyle` from `chrome.storage.sync` and the `window.__scmd.options` object for per-invocation options (see below).
+- **`copy-link.js`** — copies the current page title and URL as a Markdown inline link. No dependencies.
+- **`copy-selection-as-link.js`** — copies the selected text as the caption of a Markdown inline link to the current page.
 - **`turndown.js`** — vendored [Turndown](https://github.com/mixmark-io/turndown) library (HTML → Markdown). Injected before `content.js` so `TurndownService` is available as a global.
 - **`turndown-plugin-gfm.js`** — vendored GFM plugin, modified (see below).
-- **`options.html` / `options.js`** — settings page. Opens as a full browser tab; this is standard Chrome MV3 behaviour when `openOptionsPage()` is called programmatically and cannot be changed to a popup.
+- **`options.html` / `options.js`** — settings page (link style only). Opens as a full browser tab; this is standard Chrome MV3 behaviour when `openOptionsPage()` is called programmatically.
 
 Scripts are injected on demand rather than declared as `content_scripts` in the manifest. This avoids the broad `<all_urls>` host permission, which triggers an in-depth review on the Chrome Web Store. The `activeTab` permission grants temporary access to the current tab when the user clicks a context menu item, which is sufficient.
+
+### Per-invocation options (`window.__scmd`)
+
+Some actions share the same content script (`content.js`) but need different behaviour. Options are passed via a global object set on the page's `window` before the script is injected:
+
+```js
+// In background.js — set options, then inject
+chrome.scripting.executeScript({
+  target: { tabId: tab.id },
+  func: () => { window.__scmd = { options: { quote: false } }; }
+}).then(() => {
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    files: ['turndown.js', 'turndown-plugin-gfm.js', 'content.js']
+  });
+});
+```
+
+`content.js` reads `window.__scmd?.options` with safe nullish defaults. The `.then()` chain guarantees the flag is set before the content script runs. Both "Copy as markdown" and "Copy as quote" always write an explicit options object so that a previous invocation's state on the same page cannot bleed through.
+
+Current options:
+
+| Key     | Type    | Default | Description                                                           |
+| ------- | ------- | ------- | --------------------------------------------------------------------- |
+| `quote` | boolean | `true`  | Prefix every line with `> ` (blockquote). `false` for plain Markdown. |
+
+### Inline `func` scripts vs file-based scripts
+
+For actions that need data from the background context (e.g. `info.linkUrl`, `info.srcUrl`, `info.selectionText`), scripts are passed as inline `func` + `args` to `executeScript`. For actions that only need page context, scripts are injected as files. The two approaches cannot be mixed in a single `executeScript` call.
+
+Inline scripts in `background.js` that share logic (e.g. the `firstLine()` helper) duplicate it rather than sharing a module, since there is no build step.
 
 ### Escape function
 

@@ -1,21 +1,27 @@
 # Super Copy to Markdown — Requirements
 
-## Core behaviour
+## Context menu actions
 
-**As a user, I want to copy any selected text on a webpage as formatted Markdown** so that I can paste it directly into a Markdown editor without manual cleanup.
+The extension adds a **Super copy to markdown** submenu to the browser right-click context menu. The submenu is divided into four groups:
 
-- The extension is triggered by right-clicking selected text and choosing **Super copy to markdown → Copy** from the context menu.
-- The converted Markdown is written to the clipboard.
+**Group 1 — copy selection as markdown** (visible when text is selected)
 
-**As a user, I want every line of the copied Markdown prefixed with a blockquote marker** so that the pasted content is immediately formatted as a blockquote.
+- **Copy as markdown** — converts the selected HTML to Markdown and writes it to the clipboard.
+- **Copy as quote** — same as above, but every line is prefixed with `> `, producing a Markdown blockquote. A citation line is appended: a blank `>` line followed by `> \~ [Page Title](<url>)`.
 
-- The default prefix is `> `.
-- Blank lines receive the prefix without trailing whitespace (i.e. `>` not `> `), to avoid trailing-space linting violations.
+**Group 2 — copy as link** (visible depending on context)
 
-**As a user, I want a citation line appended automatically** so that the source of a quotation is always recorded alongside it.
+- **Copy as link** — uses the selected text as the caption of a Markdown inline link to the current page: `[caption](<url>)`. If the selection spans multiple lines, only the first non-empty line is used as the caption, with `…` appended. *(selection context)*
+- **Copy link as markdown** — right-click a hyperlink to copy it as a Markdown inline link. The caption is the selected text if present, otherwise the link's anchor text, otherwise the URL itself. *(link context)*
+- **Copy page link** — copies the current page title and URL as a Markdown inline link: `[title](<url>)`. *(all contexts)*
 
-- After the Markdown content, two additional prefixed lines are appended: a blank line, then an attribution line in the form `\~ [Page Title](<url>)`.
-- Square brackets in the page title are escaped (as `\[` and `\]`) so the title is valid as Markdown link text.
+**Group 3 — copy image** (visible when right-clicking an image)
+
+- **Copy image as markdown** — copies the image as a Markdown image embed: `![alt](<src>)`. The alt text is the selected text if present, otherwise the image's `alt` attribute.
+
+**Group 4 — options**
+
+- **Options** — opens the Options page.
 
 ## URLs
 
@@ -30,13 +36,12 @@
 
 **As a user, I want the option to use reference-style links** — `[text][1]` — with all definitions (`[1]: <url>`) appended after the content and citation, so that the body of the Markdown remains readable. This applies to both hyperlinks and images.
 
-## Options
+## Options page
 
-**As a user, I want to configure the prefix and link style** without editing any files.
+**As a user, I want to configure the link style** without editing any files.
 
 - The Options page is accessible via **Super copy to markdown → Options** in the right-click context menu.
-- The prefix field accepts any string, including an empty string (which disables prefixing entirely).
-- A **Reset to defaults** button restores the prefix to `> ` and the link style to inline.
+- A **Reset to defaults** button restores the link style to inline.
 - Settings are persisted via `chrome.storage.sync`.
 
 ## Tables
