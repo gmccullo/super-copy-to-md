@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Super Copy to Markdown",
-  "version": "1.0",
+  "version": "2.0",
   "description": "Copy selected HTML as formatted markdown.",
   "permissions": ["contextMenus", "storage", "activeTab", "scripting", "clipboardWrite"],
   "background": {
