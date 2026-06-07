@@ -144,3 +144,6 @@ build.sh
 .claude/
 claude.local.md
 settings.local.json
+
+# Claudio transient state
+claudio/intercom-protocol/.last-seen

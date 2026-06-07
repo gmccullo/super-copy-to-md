@@ -1,0 +1,49 @@
+/*
+   Canonical Claudio markdown-preview stylesheet.
+
+   Master copy lives here in claudio-meta. Edits made in this file
+   are live-previewable in meta's own VS Code markdown preview, and
+   propagate to other joined clos via standards-protocol § 3.3:
+   doctor flags content mismatch against this canonical, remediate
+   copies it over.
+
+   Propagation trigger: this file's mtime. No version stamp to
+   maintain. Editing the file (here in VS Code or via Claudio) is
+   enough — the next meta SessionStart sweep compares this mtime
+   against claudehome/standards-protocol.md's mtime and bumps the
+   protocol's version: field if this file is newer. Other clos see
+   the bump as standards-protocol drift in their next sitrep.
+*/
+
+div.table-of-contents {
+	border: solid thin grey;
+	background: rgba(0, 0, 0, 0.1);
+	columns: 20em;
+	column-rule: thin solid grey;
+
+	& ul {
+		padding-left: 1.5em;
+	}
+
+	& a {
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+}
+
+blockquote {
+	background: inherit;
+	background-color: rgba(0, 0, 0, 0.1);
+	border-left: thin grey solid;
+	margin-left: 1em;
+}
+
+code {
+	color: inherit;
+	background: inherit;
+	background-color: rgba(0, 0, 0, 0.1);
+}
