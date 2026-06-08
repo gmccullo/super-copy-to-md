@@ -147,3 +147,4 @@ settings.local.json
 
 # Claudio transient state
 claudio/intercom-protocol/.last-seen
+claude-session.md
